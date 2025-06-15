@@ -1,5 +1,6 @@
 :root {
-    --main-color: #732ce4
+    --main-color: #732ce4;
+    --topbar-height: 4rem; /* 1rem padding-top + 2rem search-height + 1rem padding-bottom */
 }
 
 * {
@@ -15,13 +16,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: whitesmoke;
   color: #333;
-  padding: 2rem;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #191919;
+  padding: 2rem; /* Default padding for right, bottom, left */
+  padding-top: calc(1em + var(--topbar-height) + 0.5rem); /* 1em gap + topbar height + body gap */
 }
 
 .simple-button {
@@ -57,22 +53,14 @@ h1 {
   color: #333;
 }
 
-.searchButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.searchIcon {
   width: 3rem;
   height: 2rem;
   border: 1px solid var(--main-color);
   background: var(--main-color);
   color: #fff;
   border-radius: 0 3rem 3rem 0;
-  cursor: pointer;
-}
-
-.searchButton img {
-    width: 1.5rem;
-    height: 1.5rem;
+  padding: 0 0.6rem;
 }
 
 .logo-container {
@@ -89,19 +77,15 @@ h1 {
     height: 2rem;
 }
 
-.container {
-    margin: 0 auto;
-    width: 100%;
-    padding: 1rem;
-    border-radius: 3rem;
-    display: flex;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
 .topbar {
-    margin: 0 auto;
-    background: white;
-    width: 100%;
+    position: fixed; /* Stick to the top */
+    top: 1em;    /* Gap from the top of the viewport */
+    left: 1em;   /* Gap from the left of the viewport */
+    right: 1em;  /* Gap from the right of the viewport */
+    width: auto; /* Auto-width based on left/right gaps */
+    z-index: 1000; /* Ensure it's above other content */
+    background: rgba(255, 255, 255, 0.75); /* Semi-transparent white for blur effect */
+    backdrop-filter: blur(10px); /* Apply blur to the area behind the topbar */
     border-radius: 3rem;
     box-shadow: 0 10px 25px #0000000d;
     display: flex;
@@ -121,4 +105,123 @@ h1 {
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-25px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* File Display Styles */
+.empty-message {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #777;
+    padding: 3rem 1rem;
+    width: 100%;
+    animation: fadeIn 1s ease;
+}
+
+.file-grid {
+    display: grid;
+    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    animation: fadeIn 1s ease;
+}
+
+.file-card {
+    background-color: white;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.file-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.file-card h3 {
+    font-size: 1.25rem;
+    color: var(--main-color);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+}
+
+.file-card p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.file-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.action-button {
+    flex-grow: 1;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    border-radius: 2rem;
+    padding: 0.6rem 1rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+}
+
+.action-button:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
+
+.action-button:active {
+    transform: scale(0.98);
+    opacity: 1;
+}
+
+.view-button {
+    background-color: #5bc0de;
+}
+
+.download-button {
+    background-color: #5cb85c;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  body {
+    /* Adjust padding for smaller screens, ensuring space for fixed topbar */
+    padding-top: calc(var(--topbar-height) + 0.5rem); /* Keep space for fixed topbar + body gap */
+    padding-left: 0;  /* Allow content below topbar to be edge-to-edge if desired */
+    padding-right: 0; /* Allow content below topbar to be edge-to-edge if desired */
+    padding-bottom: 1rem; /* Add some bottom padding for content */
+  }
+
+  .topbar {
+    top: 0; /* Override global '1em' for small screens */
+    left: 0; /* Override global '1em' for small screens */
+    right: auto; /* Remove right constraint */
+    width: 100%; /* Override global 'auto' for full width */
+    border-radius: 0; /* Remove rounded corners for a standard bar look */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* A more traditional, flatter shadow for a bar */
+  }
+
+  .topbar p {
+    display: none;
+  }
+
+  .file-grid {
+    /* Add horizontal padding so grid content isn't flush with screen edges */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* margin-top: 2rem (global) and body gap (0.5rem) still control vertical space from topbar */
+  }
 }

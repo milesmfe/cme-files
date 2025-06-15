@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <title>CME Files</title>
+    </head>
+    <body>
+        <div class="topbar">
+            <div class="logo-container">
+                <img class="logo" src="images/logo.svg" alt="Logo" />
+                <p>CME Files</p>
+            </div>
+            <div class="search">
+                <input
+                    type="text"
+                    class="searchTerm"
+                    placeholder="Search files..."
+                />
+            <img class="searchIcon" src="images/search.svg" alt="Search" />
+            </div>
+            <button class="simple-button">Admin</button>
+        </div>
+        <% if (Object.keys(files).length === 0) { %>
+        <p class="empty-message">No available files</p>
+        <% } else { %>
+        <div class="file-grid">
+            <% Object.entries(files).forEach(([id, file]) => { %>
+            <div class="file-card">
+                <div class="file-info">
+                    <h3><%= file.name %></h3>
+                    <p>Size: <%= file.size %></p>
+                    <p>Type: <%= file.type.replace('.', '') %></p>
+                </div>
+                <div class="file-actions">
+                    <a
+                        href="/view/<%= id %>"
+                        target="_blank"
+                        class="action-button view-button"
+                    >
+                        View
+                    </a>
+                    <a
+                        href="/download/<%= id %>"
+                        class="action-button download-button"
+                    >
+                        Download
+                    </a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+        <p id="no-results-message" class="empty-message" style="display: none;">
+            No files match your search.
+        </p>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const searchInput = document.querySelector('.searchTerm');
+                const searchButton = document.querySelector('.searchButton');
+                const fileGrid = document.querySelector('.file-grid');
+                const fileCards = fileGrid ? Array.from(fileGrid.querySelectorAll('.file-card')) : [];
+                const noResultsMessage = document.getElementById('no-results-message');
+
+                function filterFiles() {
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+                    let visibleFiles = 0;
+
+                    if (!fileGrid) return;
+
+                    fileCards.forEach(card => {
+                        const fileNameElement = card.querySelector('h3');
+                        const fileTypeElement = card.querySelector('p:nth-of-type(2)'); // Assumes type is the second <p>
+
+                        const fileName = fileNameElement ? fileNameElement.textContent.toLowerCase() : '';
+                        // Extract type text, e.g., "Type: txt" -> "txt"
+                        const fileType = fileTypeElement ? fileTypeElement.textContent.toLowerCase().replace('type:', '').trim() : '';
+
+                        const matchesSearch = fileName.includes(searchTerm) || fileType.includes(searchTerm);
+
+                        if (matchesSearch) {
+                            card.style.display = ''; // Or 'flex', 'grid' depending on your .file-card styling
+                            visibleFiles++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    noResultsMessage.style.display = (visibleFiles === 0 && searchTerm !== '' && fileCards.length > 0) ? 'block' : 'none';
+                }
+
+                searchInput.addEventListener('input', filterFiles);
+                searchButton.addEventListener('click', filterFiles); // Also trigger on button click
+            });
+        </script>
+    </body>
+</html>
